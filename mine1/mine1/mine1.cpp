@@ -189,6 +189,7 @@ void nextMove()
 		minesLeft++;
 		if (wrongFlag == 1 && map.grid[newrow][newcolumn] == 'B')
 			wrongFlag = 0;
+		afisareUtilizator();
 		nextMove();
 	}
 
