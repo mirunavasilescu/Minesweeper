@@ -50,7 +50,7 @@ void reset(int nrOfLines, int nrOfColumns)
 //situatiile clasice
 void easy()
 {
-	cout << "tana" << "\n";
+	
 	reset(9, 9);
 	hiddenMatrix(9, 9, 10);
 	
@@ -132,28 +132,56 @@ void hiddenMatrix(int nrOfLines, int nrOfColumns, int nrOfMines)
 
 
 /////////////////////////////////
-
-
+void showInvalid()
+{
+	cout << "Invalid answer. Please give a valid one" << "\n";
+	cout << "Your answer:" << "\n";
+}
+void cinLineAndColumn()
+{
+	cout <<"\n"<<"Give the row:" << "\n";
+	cin >> newrow;
+	while (newrow<0 || newrow>nrOfRows)
+	{
+		showInvalid();
+		cin >> newrow;
+	}
+	cout << "Give the column:" << "\n";
+	cin >> newcolumn;
+	while (newcolumn<0 || newcolumn>nrOfColumns)
+	{
+		showInvalid();
+		cin >> newcolumn;
+	}
+}
+int checkAnyFlag()
+{
+	if (nrOfMines == minesLeft)
+		return 0;
+	return 1;
+}
 void nextMove()
 {
 	cout << "Choose your next move:(Number of left mines:" << minesLeft << ")";
 	cout << "\n" << "1.Flag" << "\n" << "2.Not a bomb" << "\n" << "3.Undo flag" << "\n"<<"4.New game"<<"\n";
-	char moveType;
+	cout << "Your answer:"<<"\n";
+	char moveType[101];
 	cin >> moveType;
-	if (moveType == '4')
+	while (moveType[0] <= 48 || moveType[0] >= 53 || moveType[1] != NULL)
+	{
+		showInvalid();
+		cin >> moveType;
+	}
+	if (moveType[0] == '4')
 		newGame();
 	else
 	{ 
 		
-		cout << "Give the row" << "\n";
-		int newrow;
-		cin >> newrow;
-		cout << "Give the column" << "\n";
-		int newcolumn;
-		cin >> newcolumn;
+		
 		bool wrongFlag = 0;
-		if (moveType == '1')
+		if (moveType[0] == '1')
 		{
+			cinLineAndColumn(); 
 			mask[newrow][newcolumn] = 'F';
 			if (map.grid[newrow][newcolumn] != 'B')
 				wrongFlag = 1;
@@ -168,8 +196,9 @@ void nextMove()
 			else
 				nextMove();
 		}
-		else if (moveType == '2')
+		else if (moveType[0] == '2')
 		{
+			cinLineAndColumn();
 			if (map.grid[newrow][newcolumn] =='B')
 			{
 				cout << "Game Over!"<<"\n";
@@ -241,14 +270,28 @@ void nextMove()
 			}
 		}
 		//sterg flag
-		else if (moveType == '3')
+		else if (moveType[0] == '3')
 		{
-			mask[newrow][newcolumn] = '?';
-			minesLeft++;
-			if (wrongFlag == 1 && map.grid[newrow][newcolumn] == 'B')
-				wrongFlag = 0;
-			afisareUtilizator();
-			nextMove();
+			if (checkAnyFlag() == 0)
+			{
+				cout << "It's your first move,you have no Flags there!";
+				nextMove();
+			}
+			else
+			{
+				cinLineAndColumn();
+				while (mask[newrow][newcolumn] != 'F')
+				{
+					cout << "You don't have a flag there" << "\n" << "Please give a valid one!";
+					cinLineAndColumn();
+				}
+				mask[newrow][newcolumn] = '?';
+				minesLeft++;
+				if (wrongFlag == 1 && map.grid[newrow][newcolumn] == 'B')
+					wrongFlag = 0;
+				afisareUtilizator();
+				nextMove();
+			}
 		}
 	 }
 }
@@ -257,23 +300,30 @@ void newGame()
 	cout << "Choose the dificulty:";
 	cout << "\n";
 	cout <<"1. Beginner (height:9   width:9   mines:10)" << "\n" << "2. Intermediate (height:16   width:16   mines:40)" << "\n" << "3. Expert (height:16   width:30   mines:99)"<<"\n"<<"4. Custom"<<"\n";
-	char gameType;
+	cout << "Your answer:" << "\n";
+	char gameType[101];
 	cin >> gameType;
-	if (gameType == '1')
+	while (gameType[0] <= 48 || gameType[0] >= 53 || gameType[1] != NULL)
+	{
+		showInvalid();
+		cin >> gameType;
+	}
+	
+	if (gameType[0] == '1')
 		{
 			nrOfMines = 10;
 			minesLeft = nrOfMines;
 			nrOfRows= nrOfColumns=9;
 			easy();
 		}
-	else if (gameType == '2')
+	else if (gameType[0] == '2')
 		{
 			nrOfMines = 40;
 			minesLeft = nrOfMines;
 			nrOfRows = nrOfColumns=16;
 			medium();
 		}
-	else if (gameType == '3')
+	else if (gameType[0] == '3')
 	{
 		nrOfRows = 16;
 		nrOfColumns = 30;
@@ -327,7 +377,7 @@ void replay()
 		cout << "Quit" << endl;
 		break;
 	default:
-		cout << "Invalid input" << endl;
+		showInvalid();
 		replay();
 		break;
 	}

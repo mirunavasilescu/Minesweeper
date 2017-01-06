@@ -15,3 +15,6 @@ void hiddenMatrix(int nrOfLines, int nrOfColumns, int nrOfMines);
 
 char mask[16][30];
 int minesLeft;
+
+int newcolumn;
+int newrow;
