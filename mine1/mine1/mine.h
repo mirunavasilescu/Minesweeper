@@ -1,7 +1,7 @@
 #include <ctime>
 #define DIMMAX 100
 int nrOfMines, nrOfRows, nrOfColumns;
-int matrixGame[100][100];
+
 struct joc
 {
 	char grid[DIMMAX][DIMMAX], i, j;

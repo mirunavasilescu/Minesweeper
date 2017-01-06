@@ -12,30 +12,55 @@ using namespace std;
 void newGame();
 void nextMove();
 void replay();
-//unused
-void afisare(int dim1, int dim2)
+int verificareFinal()
+{
+	for (int i = 0; i < nrOfRows; i++)
+		for (int j = 0; j < nrOfColumns; j++)
+			if (mask[i][j] == '?')
+				return 0;
+	return 1;
+}
+void afisareCastigator()
 {
 	int i, j;
-	for (i = 0; i < dim1; i++)
+	cout << "    ";
+	for (i = 0; i < nrOfColumns; i++)
+		if (i <= 9)
+			cout << i << "   ";
+		else
+			cout << i << "  ";
+	cout << "\n";
+	for (i = 0; i < nrOfRows; i++)
 	{
-		for (j = 0; j < dim2; j++)
-			cout << matrixGame[i][j] << " ";
+		if (i <= 9)
+			cout << i << "   ";
+		else
+			cout << i << "  ";
+		for (j = 0; j < nrOfColumns; j++)
+			cout << map.grid[i][j] << "   ";
 		cout << "\n";
 	}
+	cout << "\n";
 }
 //dupa fiecare pas
 void afisareUtilizator()
 {
 	int i, j;
-	cout << "  ";
+	cout << "    ";
 	for (i = 0; i < nrOfColumns; i++)
-		cout << i << " ";
+		if(i<=9)
+			cout << i << "   ";
+		else
+			cout << i << "  ";
 	cout << "\n";
 	for (i = 0; i < nrOfRows; i++)
 	{
-		cout << i << " ";
+		if (i<=9)
+			cout << i <<"   ";
+		else
+			cout << i << "  ";
 		for (j = 0; j < nrOfColumns; j++)
-			cout << mask[i][j] << " ";
+			cout << mask[i][j] << "   ";
 		cout << "\n";
 	}
 }
@@ -50,10 +75,8 @@ void reset(int nrOfLines, int nrOfColumns)
 //situatiile clasice
 void easy()
 {
-	
 	reset(9, 9);
 	hiddenMatrix(9, 9, 10);
-	
 }
 void medium()
 {
@@ -72,7 +95,7 @@ int valid(int x, int y)
 		return 1;
 	return 0;
 }
-//inceputul
+//initializarea matricei utilizatorului
 void initialMatrix()
 {
 	int i, j;
@@ -80,12 +103,7 @@ void initialMatrix()
 		for (j = 0; j < nrOfColumns; j++)
 			mask[i][j] = '?';
 	afisareUtilizator();
-}/////////////////////
-//atasez mine2//
-/////////////////////
-
-
-
+}
 void hiddenMatrix(int nrOfLines, int nrOfColumns, int nrOfMines)
 {
 	map.nrbombe = nrOfMines;
@@ -113,25 +131,11 @@ void hiddenMatrix(int nrOfLines, int nrOfColumns, int nrOfMines)
 								if (map.grid[linieCurenta][colCurenta] != 'B')
 									map.grid[linieCurenta][colCurenta]++;
 						}
-
 		}
 	}
-	int i, j;
-	cout << "  ";
-	for (i = 0; i <= nrOfColumns - 1; i++)
-		cout << i << " ";
-	cout << "\n";
-	for (i = 0; i <= nrOfLines - 1; i++)
-	{
-		cout << i << " ";
-		for (j = 0; j<nrOfColumns; j++)
-			cout << map.grid[i][j] << " ";
-		cout << endl;
-	}
+	afisareCastigator();
 }
 
-
-/////////////////////////////////
 void showInvalid()
 {
 	cout << "Invalid answer. Please give a valid one" << "\n";
@@ -154,10 +158,32 @@ void cinLineAndColumn()
 		cin >> newcolumn;
 	}
 }
+int checkJustMinesLeft()
+{
+	for (int i = 0; i < nrOfRows; i++)
+		for (int j = 0; j < nrOfColumns; j++)
+			if (mask[i][j]=='?'&&map.grid[i][j] !='B')
+				return 0;
+	return 1;
+}
 int checkAnyFlag()
 {
 	if (nrOfMines == minesLeft)
 		return 0;
+	return 1;
+}
+void winner()
+{
+	cout << "You won!" << "\n";
+	afisareCastigator();
+	replay();
+}
+int identicMatrix()
+{
+	for (int i = 0; i < nrOfRows; i++)
+		for (int j = 0; j < nrOfColumns; j++)
+			if (map.grid[i][j] != mask[i][j])
+				return 0;
 	return 1;
 }
 void nextMove()
@@ -189,9 +215,10 @@ void nextMove()
 			minesLeft--;
 			if (minesLeft == 0 && wrongFlag == 0)
 			{
-				cout << "You won!"<<"\n";
-				replay();
-			
+				if (verificareFinal() == 1)
+					winner();
+				else
+					nextMove();
 			}
 			else
 				nextMove();
@@ -204,72 +231,65 @@ void nextMove()
 				cout << "Game Over!"<<"\n";
 				replay();
 			}
-
-			//descoperim bucata mai mare????
+			//descoperim bucata mai mare
 			else if (map.grid[newrow][newcolumn] == '0')
 			{
-				//cout << "prst";
-
-				//If our location isn't in proximity to a mine
-				//we reveal all neighboring locations
-				//dots indicate no neighboring mine
-				//if (map.grid[newrow][newcolumn] == '.')
-				//{
-					//openLocations holds neighboring locations that also
-					//are not in proximity to a mine
+				//If our location isn't in proximity to a mine we reveal all neighboring locations indicate no neighboring mine
+					//openLocations holds neighboring locations that also are not in proximity to a mine
 					queue<pair<int, int> > openLocations;
 					openLocations.push(make_pair(newrow, newcolumn));
-
-					//Walk through all dot locations and reveal their neighboars
+					//Walk through all 0 locations and reveal their neighboars
 					while (!openLocations.empty())
 					{
 						//Get the next location from our queue
 						pair<int, int> next = openLocations.front();
-
-						//The two for loops iterate over a 3x3 block within our map
-						//surrounding the point next.  It will check the point itself
-						//as well, which is redundant, but we hardly need highly
-						//optimized code here
+						//The two for loops iterate over a 3x3 block within our map surrounding the point next.  It will check the point itself
 						for (int dx = next.first - 1; dx <= next.first + 1; dx++)
 						{
 							for (int dy = next.second - 1; dy <= next.second + 1; dy++)
 							{
-								//Let's make sure the current location is within the
-								//bounds of our map.  If next is an edge location, then
-								//we'll be iterating over some points outside the map
-								//So just ignore those points
+								//Let's make sure the current location is within the bounds of our map.
 								if (dx >= 0 && dx < nrOfRows && dy >= 0 && dy < nrOfColumns)
 								{
-									//if this neighbor is a dot location and hasn't
-									//previously been revealed, add it to our list
+									//if this neighbor is a 0 location and hasn't previously been revealed, add it to our list
 									if (map.grid[dx][dy] == '0' && mask[dx][dy] == '?')
 										openLocations.push(make_pair(dx, dy));
-
 									//reveal this neighboring location
 									mask[dx][dy] = map.grid[dx][dy];
-
 								}
 							}
 						}
-						//cout << "aiurea";
-					//	afisareUtilizator();
 						//We're done with the current location in our queue, so we can remove it
 						openLocations.pop();
 					}
-					afisareUtilizator();
-					nextMove();
-				//}
+					if (verificareFinal() == 1)
+						winner();
+					else
+						if (checkJustMinesLeft() == 1)// && identicMatrix() == 1)
+							winner();
+						else
+						{
+							afisareUtilizator();
+							nextMove();
+						}
 			}
-
 			//are 1-..8 bombe
 			else
 			{
 				mask[newrow][newcolumn] = map.grid[newrow][newcolumn];
-				afisareUtilizator();
-				nextMove();
+				if (verificareFinal() == 1)
+					winner();
+				else
+					if (checkJustMinesLeft() == 1) //&& identicMatrix() == 1)
+						winner();
+					else
+					{
+						afisareUtilizator();
+						nextMove();
+					}
 			}
 		}
-		//sterg flag
+		//delete flag
 		else if (moveType[0] == '3')
 		{
 			if (checkAnyFlag() == 0)
@@ -308,7 +328,6 @@ void newGame()
 		showInvalid();
 		cin >> gameType;
 	}
-	
 	if (gameType[0] == '1')
 		{
 			nrOfMines = 10;
@@ -362,7 +381,6 @@ void newGame()
 	nextMove();
 }
 ////replay
-
 void replay()
 {
 	char a;
