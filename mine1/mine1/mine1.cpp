@@ -3,6 +3,11 @@
 #include"stdafx.h"
 #include "mine.h"
 #include <iostream>
+#include <queue>
+#include <vector>
+#include <utility>
+#include <random>
+
 using namespace std;
 void newGame();
 void nextMove();
@@ -169,9 +174,59 @@ void nextMove()
 		}
 
 		//descoperim bucata mai mare????
-		else if (map.grid[newrow][newcolumn] == 0)
+		else if (map.grid[newrow][newcolumn] == '0')
 		{
+			//cout << "prst";
 
+			//If our location isn't in proximity to a mine
+			//we reveal all neighboring locations
+			//dots indicate no neighboring mine
+			//if (map.grid[newrow][newcolumn] == '.')
+			//{
+				//openLocations holds neighboring locations that also
+				//are not in proximity to a mine
+				queue<pair<int, int> > openLocations;
+				openLocations.push(make_pair(newrow, newcolumn));
+
+				//Walk through all dot locations and reveal their neighboars
+				while (!openLocations.empty())
+				{
+					//Get the next location from our queue
+					pair<int, int> next = openLocations.front();
+
+					//The two for loops iterate over a 3x3 block within our map
+					//surrounding the point next.  It will check the point itself
+					//as well, which is redundant, but we hardly need highly
+					//optimized code here
+					for (int dx = next.first - 1; dx <= next.first + 1; dx++)
+					{
+						for (int dy = next.second - 1; dy <= next.second + 1; dy++)
+						{
+							//Let's make sure the current location is within the
+							//bounds of our map.  If next is an edge location, then
+							//we'll be iterating over some points outside the map
+							//So just ignore those points
+							if (dx >= 0 && dx < nrOfRows && dy >= 0 && dy < nrOfColumns)
+							{
+								//if this neighbor is a dot location and hasn't
+								//previously been revealed, add it to our list
+								if (map.grid[dx][dy] == '0' && mask[dx][dy] == '?')
+									openLocations.push(make_pair(dx, dy));
+
+								//reveal this neighboring location
+								mask[dx][dy] = map.grid[dx][dy];
+
+							}
+						}
+					}
+					//cout << "aiurea";
+				//	afisareUtilizator();
+					//We're done with the current location in our queue, so we can remove it
+					openLocations.pop();
+				}
+				afisareUtilizator();
+				nextMove();
+			//}
 		}
 
 		//are 1-..8 bombe

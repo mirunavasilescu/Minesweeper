@@ -1,15 +1,17 @@
-﻿Build started 05.01.2017 14:09:11.
-     1>Project "C:\Users\Miruna\Desktop\mine1\mine1\mine1.vcxproj" on node 2 (Build target(s)).
+﻿Build started 06.01.2017 08:46:56.
+     1>Project "C:\Users\Miruna\Documents\Visual Studio 2013\Projects\Minesweeper\Minesweeper\mine1\mine1\mine1.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\mine1.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\mine1.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt mine1.cpp
          mine1.cpp
-     1>c:\users\miruna\desktop\mine1\mine1\mine1.cpp(89): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>c:\users\miruna\documents\visual studio 2013\projects\minesweeper\minesweeper\mine1\mine1\mine1.cpp(94): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Miruna\Desktop\mine1\Debug\mine1.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Miruna\Desktop\mine1\Debug\mine1.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Miruna\Desktop\mine1\Debug\mine1.lib" /MACHINE:X86 Debug\mine1.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Miruna\Documents\Visual Studio 2013\Projects\Minesweeper\Minesweeper\mine1\Debug\mine1.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Miruna\Documents\Visual Studio 2013\Projects\Minesweeper\Minesweeper\mine1\Debug\mine1.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Miruna\Documents\Visual Studio 2013\Projects\Minesweeper\Minesweeper\mine1\Debug\mine1.lib" /MACHINE:X86 Debug\mine1.obj
          Debug\stdafx.obj
-         mine1.vcxproj -> C:\Users\Miruna\Desktop\mine1\Debug\mine1.exe
-     1>Done Building Project "C:\Users\Miruna\Desktop\mine1\mine1\mine1.vcxproj" (Build target(s)).
+         mine1.vcxproj -> C:\Users\Miruna\Documents\Visual Studio 2013\Projects\Minesweeper\Minesweeper\mine1\Debug\mine1.exe
+     1>Done Building Project "C:\Users\Miruna\Documents\Visual Studio 2013\Projects\Minesweeper\Minesweeper\mine1\mine1\mine1.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.23
+Time Elapsed 00:00:06.34
