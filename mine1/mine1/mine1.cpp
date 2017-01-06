@@ -57,13 +57,11 @@ void easy()
 }
 void medium()
 {
-	cout << "tanaa"<<"\n";
 	reset(16, 16);
 	hiddenMatrix(16, 16, 40);
 }
 void hard()
 {
-	cout << "tanaaa" << "\n";
 	reset(16, 30);
 	hiddenMatrix(16, 30, 99);
 }
@@ -139,138 +137,143 @@ void hiddenMatrix(int nrOfLines, int nrOfColumns, int nrOfMines)
 void nextMove()
 {
 	cout << "Choose your next move:(Number of left mines:" << minesLeft << ")";
-	cout << "\n" << "1.Flag" << "\n" << "2.Not a bomb" << "\n" << "3.Undo flag" << "\n";
-	char type2;
-	cin >> type2;
-	cout << "Give the row" << "\n";
-	int newrow;
-	cin >> newrow;
-	cout << "Give the column" << "\n";
-	int newcolumn;
-	cin >> newcolumn;
-	bool wrongFlag = 0;
-	if (type2 == '1')
-	{
-		mask[newrow][newcolumn] = 'F';
-		if (map.grid[newrow][newcolumn] != 'B')
-			wrongFlag = 1;
-		afisareUtilizator();
-		minesLeft--;
-		if (minesLeft == 0 && wrongFlag == 0)
+	cout << "\n" << "1.Flag" << "\n" << "2.Not a bomb" << "\n" << "3.Undo flag" << "\n"<<"4.New game"<<"\n";
+	char moveType;
+	cin >> moveType;
+	if (moveType == '4')
+		newGame();
+	else
+	{ 
+		
+		cout << "Give the row" << "\n";
+		int newrow;
+		cin >> newrow;
+		cout << "Give the column" << "\n";
+		int newcolumn;
+		cin >> newcolumn;
+		bool wrongFlag = 0;
+		if (moveType == '1')
 		{
-			cout << "You win!"<<"\n";
-			replay();
+			mask[newrow][newcolumn] = 'F';
+			if (map.grid[newrow][newcolumn] != 'B')
+				wrongFlag = 1;
+			afisareUtilizator();
+			minesLeft--;
+			if (minesLeft == 0 && wrongFlag == 0)
+			{
+				cout << "You won!"<<"\n";
+				replay();
 			
+			}
+			else
+				nextMove();
 		}
-		else
-			nextMove();
-	}
-	else if (type2 == '2')
-	{
-		if (map.grid[newrow][newcolumn] =='B')
+		else if (moveType == '2')
 		{
-			cout << "Game Over!"<<"\n";
-			replay();
-		}
+			if (map.grid[newrow][newcolumn] =='B')
+			{
+				cout << "Game Over!"<<"\n";
+				replay();
+			}
 
-		//descoperim bucata mai mare????
-		else if (map.grid[newrow][newcolumn] == '0')
-		{
-			//cout << "prst";
+			//descoperim bucata mai mare????
+			else if (map.grid[newrow][newcolumn] == '0')
+			{
+				//cout << "prst";
 
-			//If our location isn't in proximity to a mine
-			//we reveal all neighboring locations
-			//dots indicate no neighboring mine
-			//if (map.grid[newrow][newcolumn] == '.')
-			//{
-				//openLocations holds neighboring locations that also
-				//are not in proximity to a mine
-				queue<pair<int, int> > openLocations;
-				openLocations.push(make_pair(newrow, newcolumn));
+				//If our location isn't in proximity to a mine
+				//we reveal all neighboring locations
+				//dots indicate no neighboring mine
+				//if (map.grid[newrow][newcolumn] == '.')
+				//{
+					//openLocations holds neighboring locations that also
+					//are not in proximity to a mine
+					queue<pair<int, int> > openLocations;
+					openLocations.push(make_pair(newrow, newcolumn));
 
-				//Walk through all dot locations and reveal their neighboars
-				while (!openLocations.empty())
-				{
-					//Get the next location from our queue
-					pair<int, int> next = openLocations.front();
-
-					//The two for loops iterate over a 3x3 block within our map
-					//surrounding the point next.  It will check the point itself
-					//as well, which is redundant, but we hardly need highly
-					//optimized code here
-					for (int dx = next.first - 1; dx <= next.first + 1; dx++)
+					//Walk through all dot locations and reveal their neighboars
+					while (!openLocations.empty())
 					{
-						for (int dy = next.second - 1; dy <= next.second + 1; dy++)
+						//Get the next location from our queue
+						pair<int, int> next = openLocations.front();
+
+						//The two for loops iterate over a 3x3 block within our map
+						//surrounding the point next.  It will check the point itself
+						//as well, which is redundant, but we hardly need highly
+						//optimized code here
+						for (int dx = next.first - 1; dx <= next.first + 1; dx++)
 						{
-							//Let's make sure the current location is within the
-							//bounds of our map.  If next is an edge location, then
-							//we'll be iterating over some points outside the map
-							//So just ignore those points
-							if (dx >= 0 && dx < nrOfRows && dy >= 0 && dy < nrOfColumns)
+							for (int dy = next.second - 1; dy <= next.second + 1; dy++)
 							{
-								//if this neighbor is a dot location and hasn't
-								//previously been revealed, add it to our list
-								if (map.grid[dx][dy] == '0' && mask[dx][dy] == '?')
-									openLocations.push(make_pair(dx, dy));
+								//Let's make sure the current location is within the
+								//bounds of our map.  If next is an edge location, then
+								//we'll be iterating over some points outside the map
+								//So just ignore those points
+								if (dx >= 0 && dx < nrOfRows && dy >= 0 && dy < nrOfColumns)
+								{
+									//if this neighbor is a dot location and hasn't
+									//previously been revealed, add it to our list
+									if (map.grid[dx][dy] == '0' && mask[dx][dy] == '?')
+										openLocations.push(make_pair(dx, dy));
 
-								//reveal this neighboring location
-								mask[dx][dy] = map.grid[dx][dy];
+									//reveal this neighboring location
+									mask[dx][dy] = map.grid[dx][dy];
 
+								}
 							}
 						}
+						//cout << "aiurea";
+					//	afisareUtilizator();
+						//We're done with the current location in our queue, so we can remove it
+						openLocations.pop();
 					}
-					//cout << "aiurea";
-				//	afisareUtilizator();
-					//We're done with the current location in our queue, so we can remove it
-					openLocations.pop();
-				}
+					afisareUtilizator();
+					nextMove();
+				//}
+			}
+
+			//are 1-..8 bombe
+			else
+			{
+				mask[newrow][newcolumn] = map.grid[newrow][newcolumn];
 				afisareUtilizator();
 				nextMove();
-			//}
+			}
 		}
-
-		//are 1-..8 bombe
-		else
+		//sterg flag
+		else if (moveType == '3')
 		{
-			mask[newrow][newcolumn] = map.grid[newrow][newcolumn];
+			mask[newrow][newcolumn] = '?';
+			minesLeft++;
+			if (wrongFlag == 1 && map.grid[newrow][newcolumn] == 'B')
+				wrongFlag = 0;
 			afisareUtilizator();
 			nextMove();
 		}
-	}
-	//sterg flag
-	else
-	{
-		mask[newrow][newcolumn] = '?';
-		minesLeft++;
-		if (wrongFlag == 1 && map.grid[newrow][newcolumn] == 'B')
-			wrongFlag = 0;
-		afisareUtilizator();
-		nextMove();
-	}
-
+	 }
 }
 void newGame()
 {
 	cout << "Choose the dificulty:";
 	cout << "\n";
 	cout <<"1. Beginner (height:9   width:9   mines:10)" << "\n" << "2. Intermediate (height:16   width:16   mines:40)" << "\n" << "3. Expert (height:16   width:30   mines:99)"<<"\n"<<"4. Custom"<<"\n";
-	char type;
-	cin >> type;
-	if (type == '1')
+	char gameType;
+	cin >> gameType;
+	if (gameType == '1')
 		{
 			nrOfMines = 10;
 			minesLeft = nrOfMines;
 			nrOfRows= nrOfColumns=9;
 			easy();
 		}
-	else if (type == '2')
+	else if (gameType == '2')
 		{
 			nrOfMines = 40;
 			minesLeft = nrOfMines;
 			nrOfRows = nrOfColumns=16;
 			medium();
 		}
-	else if (type == '3')
+	else if (gameType == '3')
 	{
 		nrOfRows = 16;
 		nrOfColumns = 30;
