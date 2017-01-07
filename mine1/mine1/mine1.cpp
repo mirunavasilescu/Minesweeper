@@ -12,6 +12,7 @@ using namespace std;
 void newGame();
 void nextMove();
 void replay();
+void finalTime();
 int verificareFinal()
 {
 	for (int i = 0; i < nrOfRows; i++)
@@ -23,12 +24,12 @@ int verificareFinal()
 void afisareCastigator()
 {
 	int i, j;
-	cout << "    ";
+	cout << "     ";
 	for (i = 0; i < nrOfColumns; i++)
 		if (i <= 9)
-			cout << i << "   ";
+			cout << i << "     ";
 		else
-			cout << i << "  ";
+			cout << i << "    ";
 	cout << "\n";
 	for (i = 0; i < nrOfRows; i++)
 	{
@@ -37,7 +38,7 @@ void afisareCastigator()
 		else
 			cout << i << "  ";
 		for (j = 0; j < nrOfColumns; j++)
-			cout << map.grid[i][j] << "   ";
+			cout << "|" << map.grid[i][j] << "|   ";
 		cout << "\n";
 	}
 	cout << "\n";
@@ -46,12 +47,12 @@ void afisareCastigator()
 void afisareUtilizator()
 {
 	int i, j;
-	cout << "    ";
+	cout << "     ";
 	for (i = 0; i < nrOfColumns; i++)
 		if(i<=9)
-			cout << i << "   ";
+			cout << i << "     ";
 		else
-			cout << i << "  ";
+			cout << i << "    ";
 	cout << "\n";
 	for (i = 0; i < nrOfRows; i++)
 	{
@@ -60,7 +61,7 @@ void afisareUtilizator()
 		else
 			cout << i << "  ";
 		for (j = 0; j < nrOfColumns; j++)
-			cout << mask[i][j] << "   ";
+			cout <<"|"<< mask[i][j] << "|   ";
 		cout << "\n";
 	}
 }
@@ -106,20 +107,20 @@ void initialMatrix()
 }
 void hiddenMatrix(int nrOfLines, int nrOfColumns, int nrOfMines)
 {
-	map.nrbombe = nrOfMines;
+	map.nrBombs = nrOfMines;
 	srand(time(0));
 	int linVecina, colVecina;
-	while (map.nrbombe>0)
+	while (map.nrBombs>0)
 	{
 		map.mine_x = rand() % nrOfLines;
-		cout << map.mine_x << " ";
+		//cout << map.mine_x << " ";
 		map.mine_y = rand() % nrOfColumns;
-		cout << map.mine_y << " " << "\n";
+		//cout << map.mine_y << " " << "\n";
 
 		if (map.grid[map.mine_x][map.mine_y] != 'B')
 		{
 			map.grid[map.mine_x][map.mine_y] = 'B';  //
-			map.nrbombe--;
+			map.nrBombs--;
 			for (linVecina = -1; linVecina <= 1; linVecina++)
 				for (colVecina = -1; colVecina <= 1; colVecina++)
 					if (linVecina != 0 || colVecina != 0)
@@ -133,7 +134,7 @@ void hiddenMatrix(int nrOfLines, int nrOfColumns, int nrOfMines)
 						}
 		}
 	}
-	afisareCastigator();
+	//afisareCastigator();
 }
 
 void showInvalid()
@@ -144,18 +145,18 @@ void showInvalid()
 void cinLineAndColumn()
 {
 	cout <<"\n"<<"Give the row:" << "\n";
-	cin >> newrow;
-	while (newrow<0 || newrow>nrOfRows)
+	cin >> newRow;
+	while (newRow<0 || newRow>nrOfRows)
 	{
 		showInvalid();
-		cin >> newrow;
+		cin >> newRow;
 	}
 	cout << "Give the column:" << "\n";
-	cin >> newcolumn;
-	while (newcolumn<0 || newcolumn>nrOfColumns)
+	cin >> newColumn;
+	while (newColumn<0 || newColumn>nrOfColumns)
 	{
 		showInvalid();
-		cin >> newcolumn;
+		cin >> newColumn;
 	}
 }
 int checkJustMinesLeft()
@@ -176,6 +177,7 @@ void winner()
 {
 	cout << "You won!" << "\n";
 	afisareCastigator();
+	finalTime();
 	replay();
 }
 int identicMatrix()
@@ -184,6 +186,12 @@ int identicMatrix()
 		for (int j = 0; j < nrOfColumns; j++)
 			if (map.grid[i][j] != mask[i][j])
 				return 0;
+	return 1;
+}
+int possibilityOfFlag()
+{
+	if (mask[newRow][newColumn] != '?')
+		return 0;
 	return 1;
 }
 void nextMove()
@@ -208,8 +216,13 @@ void nextMove()
 		if (moveType[0] == '1')
 		{
 			cinLineAndColumn(); 
-			mask[newrow][newcolumn] = 'F';
-			if (map.grid[newrow][newcolumn] != 'B')
+			while (possibilityOfFlag() == 0)
+			{
+				cout << "That space is uncovered.Please give a valid one:";
+				cinLineAndColumn();
+			}
+			mask[newRow][newColumn] = 'F';
+			if (map.grid[newRow][newColumn] != 'B')
 				wrongFlag = 1;
 			afisareUtilizator();
 			minesLeft--;
@@ -226,18 +239,19 @@ void nextMove()
 		else if (moveType[0] == '2')
 		{
 			cinLineAndColumn();
-			if (map.grid[newrow][newcolumn] =='B')
+			if (map.grid[newRow][newColumn] == 'B')
 			{
 				cout << "Game Over!"<<"\n";
+				finalTime();
 				replay();
 			}
 			//descoperim bucata mai mare
-			else if (map.grid[newrow][newcolumn] == '0')
+			else if (map.grid[newRow][newColumn] == '0')
 			{
 				//If our location isn't in proximity to a mine we reveal all neighboring locations indicate no neighboring mine
 					//openLocations holds neighboring locations that also are not in proximity to a mine
 					queue<pair<int, int> > openLocations;
-					openLocations.push(make_pair(newrow, newcolumn));
+					openLocations.push(make_pair(newRow, newColumn));
 					//Walk through all 0 locations and reveal their neighboars
 					while (!openLocations.empty())
 					{
@@ -276,7 +290,7 @@ void nextMove()
 			//are 1-..8 bombe
 			else
 			{
-				mask[newrow][newcolumn] = map.grid[newrow][newcolumn];
+				mask[newRow][newColumn] = map.grid[newRow][newColumn];
 				if (verificareFinal() == 1)
 					winner();
 				else
@@ -300,20 +314,29 @@ void nextMove()
 			else
 			{
 				cinLineAndColumn();
-				while (mask[newrow][newcolumn] != 'F')
+				while (mask[newRow][newColumn] != 'F')
 				{
 					cout << "You don't have a flag there" << "\n" << "Please give a valid one!";
 					cinLineAndColumn();
 				}
-				mask[newrow][newcolumn] = '?';
+				mask[newRow][newColumn] = '?';
 				minesLeft++;
-				if (wrongFlag == 1 && map.grid[newrow][newcolumn] == 'B')
+				if (wrongFlag == 1 && map.grid[newRow][newColumn] == 'B')
 					wrongFlag = 0;
 				afisareUtilizator();
 				nextMove();
 			}
 		}
 	 }
+}
+void startTime()
+{
+	start = clock();
+}
+void finalTime()
+{
+	duration = (clock() - start) / (double)CLOCKS_PER_SEC;
+	std::cout << "Your time:" << duration <<"s"<< '\n';
 }
 void newGame()
 {
@@ -330,6 +353,7 @@ void newGame()
 	}
 	if (gameType[0] == '1')
 		{
+			startTime();
 			nrOfMines = 10;
 			minesLeft = nrOfMines;
 			nrOfRows= nrOfColumns=9;
@@ -337,6 +361,7 @@ void newGame()
 		}
 	else if (gameType[0] == '2')
 		{
+			startTime();
 			nrOfMines = 40;
 			minesLeft = nrOfMines;
 			nrOfRows = nrOfColumns=16;
@@ -344,6 +369,7 @@ void newGame()
 		}
 	else if (gameType[0] == '3')
 	{
+		startTime();
 		nrOfRows = 16;
 		nrOfColumns = 30;
 		minesLeft = nrOfMines;
@@ -359,6 +385,7 @@ void newGame()
 			cout << "Incorect dates"<<"\n"<<"Give a valid height:"<<"\n";
 			cin >> nrOfRows;
 		}
+		startTime();
 		cout << "Give the width:";
 		cin >> nrOfColumns;
 		while (valid(nrOfColumns, 30) == 0)
@@ -388,16 +415,16 @@ void replay()
 	cin >> a;
 	switch (a)
 	{
-	case '1':
-		newGame();
-		break;
-	case '2':
-		cout << "Quit" << endl;
-		break;
-	default:
-		showInvalid();
-		replay();
-		break;
+		case '1':
+			newGame();
+			break;
+		case '2':
+			cout << "Quit" << endl;
+			break;
+		default:
+			showInvalid();
+			replay();
+			break;
 	}
 }
 
