@@ -1,6 +1,7 @@
 #include <ctime>
 #define DIMMAX 100
 #include <ctime>
+
 int nrOfMines, nrOfRows, nrOfColumns;
 
 struct joc
@@ -23,3 +24,5 @@ int newRow;
 //pt timp
 double duration;
 clock_t start;
+
+int difficulty;

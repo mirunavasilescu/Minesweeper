@@ -36,4 +36,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Begginer.in">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Medium.in">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Expert.in">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="temp.out">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>

@@ -7,12 +7,59 @@
 #include <vector>
 #include <utility>
 #include <random>
+#include <string>
+#include <fstream>
 
 using namespace std;
 void newGame();
 void nextMove();
 void replay();
 void finalTime();
+string line;
+//clasament
+void actualizeazaClasament(string searchedName, double scorFinal, char* numeFisier)
+{
+	ifstream fin(numeFisier);
+	ofstream temp("temp.out");
+	int gasitOnce = 0;
+	string newLine = searchedName + " " + to_string(scorFinal);
+	while (getline(fin, line) && line != "")
+	{
+		string delimiter = " ";
+		string name = line.substr(0, line.find(delimiter));
+		string score = line.substr(line.find(delimiter), line.length());
+		double scoreInt = stod(score);
+		if (name == searchedName && gasitOnce == 0)
+		{
+			gasitOnce = 1;
+			if (scoreInt > scorFinal)
+			{
+				temp << newLine << endl;
+			}
+			else if (scoreInt <= scorFinal)
+			{
+				temp << line << endl;
+			}
+		}
+		else if (scoreInt >= scorFinal && gasitOnce == 0)
+		{
+			temp << newLine << endl;
+			temp << line << endl;
+			gasitOnce = 1;
+		}
+		else if (name != searchedName)
+			temp << line << endl;
+
+	}
+	if (gasitOnce == 0)
+	{
+		temp << newLine;
+	}
+	temp.close();
+	fin.close();
+	remove(numeFisier);
+	rename("temp.out", numeFisier);
+}
 int verificareFinal()
 {
 	for (int i = 0; i < nrOfRows; i++)
@@ -178,6 +225,26 @@ void winner()
 	cout << "You won!" << "\n";
 	afisareCastigator();
 	finalTime();
+	//clasament
+	string name;
+	cout << "Enter your name:" << "\n";
+	cin >> name;
+	char* file;
+	if (difficulty == 1)
+	{
+		file = "Begginer.in";
+		actualizeazaClasament(name, duration, file);
+	}
+	else if (difficulty == 2)
+	{
+		file = "Medium.in";
+		actualizeazaClasament(name, duration, file);
+	}
+	else if (difficulty == 3)
+	{
+		file = "Expert.in";
+		actualizeazaClasament(name, duration, file);
+	}
 	replay();
 }
 int identicMatrix()
@@ -354,6 +421,7 @@ void newGame()
 	if (gameType[0] == '1')
 		{
 			startTime();
+			difficulty = 1;
 			nrOfMines = 10;
 			minesLeft = nrOfMines;
 			nrOfRows= nrOfColumns=9;
@@ -362,6 +430,7 @@ void newGame()
 	else if (gameType[0] == '2')
 		{
 			startTime();
+			difficulty = 2;
 			nrOfMines = 40;
 			minesLeft = nrOfMines;
 			nrOfRows = nrOfColumns=16;
@@ -370,6 +439,7 @@ void newGame()
 	else if (gameType[0] == '3')
 	{
 		startTime();
+		difficulty = 3;
 		nrOfRows = 16;
 		nrOfColumns = 30;
 		minesLeft = nrOfMines;
