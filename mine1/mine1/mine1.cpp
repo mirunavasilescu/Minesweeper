@@ -160,10 +160,7 @@ void hiddenMatrix(int nrOfLines, int nrOfColumns, int nrOfMines)
 	while (map.nrBombs>0)
 	{
 		map.mine_x = rand() % nrOfLines;
-		//cout << map.mine_x << " ";
 		map.mine_y = rand() % nrOfColumns;
-		//cout << map.mine_y << " " << "\n";
-
 		if (map.grid[map.mine_x][map.mine_y] != 'B')
 		{
 			map.grid[map.mine_x][map.mine_y] = 'B';  //
@@ -181,30 +178,87 @@ void hiddenMatrix(int nrOfLines, int nrOfColumns, int nrOfMines)
 						}
 		}
 	}
-	//afisareCastigator();
+	afisareCastigator();
 }
 
 void showInvalid()
 {
-	cout << "Invalid answer. Please give a valid one" << "\n";
-	cout << "Your answer:" << "\n";
+	cout << "Invalid answer. Please give a valid one:" << "\n";
+
+}
+int validLineOrColumn(char dim[100],int type)
+{
+	int position;
+	if (dim[0] >= '0'&&dim[0] <= '9')
+	{
+		position = dim[0] - '0';
+		if (dim[1] == NULL)
+		{
+			if ((type == 1 && position < nrOfRows) || (type == 2 && position < nrOfColumns))
+				return position;
+			else
+			{
+				cout << "Your position is out of game";
+				return -1;
+			}
+		}
+		else if (dim[2] == NULL)
+		{
+
+			if ((dim[1] >= '0'&&dim[1] <= '9'))
+			{
+				position = (dim[0] - 48) * 10 + dim[1] - '0';
+				//////cond max
+				if ((type == 1 && position < nrOfRows) || (type == 2 && position < nrOfColumns))
+				{
+					cout << "position=" << position << " " << nrOfRows << endl;
+					return position;
+					
+				}
+				else
+				{
+					cout << "Wrong input.Please give a valid one" << "\n";
+					return -1;
+				}
+			}
+			else
+			{
+				cout << "Wrong input.Please give a valid one" << "\n";
+				return -1;
+			}
+
+		}
+		else
+		{
+			cout << "Wrong input.Please give a valid one" << "\n";
+			return -1;
+		}
+	}
+	else
+	{
+		cout << "Wrong input.Please give a valid one" << "\n";
+		return -1;
+	}
+
 }
 void cinLineAndColumn()
 {
-	cout <<"\n"<<"Give the row:" << "\n";
-	cin >> newRow;
-	while (newRow<0 || newRow>nrOfRows)
+    newRow = -1;
+	while (newRow == -1)
 	{
-		showInvalid();
-		cin >> newRow;
+		cout << "\n" << "Give the row:" << "\n";
+		cin >> dim1;
+		newRow = validLineOrColumn(dim1, 1);
 	}
-	cout << "Give the column:" << "\n";
-	cin >> newColumn;
-	while (newColumn<0 || newColumn>nrOfColumns)
+
+	newColumn = -1;
+	while (newColumn == -1)
 	{
-		showInvalid();
-		cin >> newColumn;
+		cout << "\n" << "Give the column:" << "\n";
+		cin >> dim2;
+		newColumn = validLineOrColumn(dim2, 2);
 	}
+
 }
 int checkJustMinesLeft()
 {
@@ -271,21 +325,20 @@ void nextMove()
 	while (moveType[0] <= 48 || moveType[0] >= 53 || moveType[1] != NULL)
 	{
 		showInvalid();
+		cout << "Your answer:" << "\n";
 		cin >> moveType;
 	}
 	if (moveType[0] == '4')
 		newGame();
 	else
 	{ 
-		
-		
 		bool wrongFlag = 0;
 		if (moveType[0] == '1')
 		{
 			cinLineAndColumn(); 
 			while (possibilityOfFlag() == 0)
 			{
-				cout << "That space is uncovered.Please give a valid one:";
+				cout << "That space is uncovered or you have a flag there.Please give a valid one:";
 				cinLineAndColumn();
 			}
 			mask[newRow][newColumn] = 'F';
@@ -306,6 +359,11 @@ void nextMove()
 		else if (moveType[0] == '2')
 		{
 			cinLineAndColumn();
+			while (mask[newRow][newColumn] != '?')
+			{
+				cout << "That is an uncoverded zone .Please give another one!";
+				cinLineAndColumn();
+			}
 			if (map.grid[newRow][newColumn] == 'B')
 			{
 				cout << "Game Over!"<<"\n";
@@ -416,6 +474,7 @@ void newGame()
 	while (gameType[0] <= 48 || gameType[0] >= 53 || gameType[1] != NULL)
 	{
 		showInvalid();
+		cout << "Your answer:" << "\n";
 		cin >> gameType;
 	}
 	if (gameType[0] == '1')
@@ -489,10 +548,11 @@ void replay()
 			newGame();
 			break;
 		case '2':
-			cout << "Quit" << endl;
+			exit(0);
 			break;
 		default:
 			showInvalid();
+			cout << "Your answer:" << "\n";
 			replay();
 			break;
 	}

@@ -1,6 +1,6 @@
 #include <ctime>
 #define DIMMAX 100
-#include <ctime>
+#include <cstdio>
 
 int nrOfMines, nrOfRows, nrOfColumns;
 
@@ -20,6 +20,8 @@ int minesLeft;
 
 int newColumn;
 int newRow;
+char dim1[101];
+char dim2[101];
 
 //pt timp
 double duration;
