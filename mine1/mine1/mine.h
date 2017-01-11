@@ -1,6 +1,7 @@
 #include <ctime>
 #define DIMMAX 100
 #include <cstdio>
+#include <string>
 
 int nrOfMines, nrOfRows, nrOfColumns;
 
@@ -27,4 +28,16 @@ char dim2[101];
 double duration;
 clock_t start;
 
+//pt clasament
 int difficulty;
+
+
+int nrOfPlayedGames;
+int nrOfMoves;
+
+//PT HINT
+int nrOfLeftHints = 3;
+int hintRow;
+int hintColumn;
+int resetHint = 0;
+

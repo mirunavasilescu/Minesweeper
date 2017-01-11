@@ -7,13 +7,13 @@
 #include <vector>
 #include <utility>
 #include <random>
-#include <string>
+
 #include <fstream>
 
 using namespace std;
 void newGame();
 void nextMove();
-void replay();
+int replay();
 void finalTime();
 string line;
 //clasament
@@ -71,19 +71,19 @@ int verificareFinal()
 void afisareCastigator()
 {
 	int i, j;
-	cout << "     ";
+	cout << "    ";
 	for (i = 0; i < nrOfColumns; i++)
 		if (i <= 9)
-			cout << i << "     ";
-		else
 			cout << i << "    ";
+		else
+			cout << i << "   ";
 	cout << "\n";
 	for (i = 0; i < nrOfRows; i++)
 	{
 		if (i <= 9)
-			cout << i << "   ";
-		else
 			cout << i << "  ";
+		else
+			cout << i << " ";
 		for (j = 0; j < nrOfColumns; j++)
 			cout << "|" << map.grid[i][j] << "|   ";
 		cout << "\n";
@@ -94,23 +94,24 @@ void afisareCastigator()
 void afisareUtilizator()
 {
 	int i, j;
-	cout << "     ";
+	cout << "    ";
 	for (i = 0; i < nrOfColumns; i++)
 		if(i<=9)
-			cout << i << "     ";
-		else
 			cout << i << "    ";
+		else
+			cout << i << "   ";
 	cout << "\n";
 	for (i = 0; i < nrOfRows; i++)
 	{
 		if (i<=9)
-			cout << i <<"   ";
+			cout << i <<"  ";
 		else
-			cout << i << "  ";
+			cout << i << " ";
 		for (j = 0; j < nrOfColumns; j++)
-			cout <<"|"<< mask[i][j] << "|   ";
+			cout <<"|"<< mask[i][j] << "|  ";
 		cout << "\n";
 	}
+	cout << "\n";
 }
 void reset(int nrOfLines, int nrOfColumns)
 {
@@ -139,7 +140,7 @@ void hard()
 //verificare date valide
 int valid(int x, int y)
 {
-	if (x <= y)
+	if (x <= y&&x>0)
 		return 1;
 	return 0;
 }
@@ -188,8 +189,9 @@ void showInvalid()
 }
 int validLineOrColumn(char dim[100],int type)
 {
+	
 	int position;
-	if (dim[0] >= '0'&&dim[0] <= '9')
+	if ((dim[0] > '0'&&dim[0] <= '9') || (dim[0] == '0'&&dim[1]==NULL))
 	{
 		position = dim[0] - '0';
 		if (dim[1] == NULL)
@@ -217,26 +219,26 @@ int validLineOrColumn(char dim[100],int type)
 				}
 				else
 				{
-					cout << "Wrong input.Please give a valid one" << "\n";
+					cout << "1 Wrong input.Please give a valid one" << "\n";
 					return -1;
 				}
 			}
 			else
 			{
-				cout << "Wrong input.Please give a valid one" << "\n";
+				cout << "2 Wrong input.Please give a valid one" << "\n";
 				return -1;
 			}
 
 		}
 		else
 		{
-			cout << "Wrong input.Please give a valid one" << "\n";
+			cout << "3 Wrong input.Please give a valid one" << "\n";
 			return -1;
 		}
 	}
 	else
 	{
-		cout << "Wrong input.Please give a valid one" << "\n";
+		cout << "4 Wrong input.Please give a valid one" << "\n";
 		return -1;
 	}
 
@@ -247,7 +249,8 @@ void cinLineAndColumn()
 	while (newRow == -1)
 	{
 		cout << "\n" << "Give the row:" << "\n";
-		cin >> dim1;
+		cin.getline(dim1,101);
+		cout << "dim1 " << dim1<<"\n";
 		newRow = validLineOrColumn(dim1, 1);
 	}
 
@@ -255,7 +258,9 @@ void cinLineAndColumn()
 	while (newColumn == -1)
 	{
 		cout << "\n" << "Give the column:" << "\n";
-		cin >> dim2;
+		//cin.get();
+		cin.getline(dim2, 101);
+		cout << "dim2 " << dim2<<"\n";
 		newColumn = validLineOrColumn(dim2, 2);
 	}
 
@@ -274,32 +279,37 @@ int checkAnyFlag()
 		return 0;
 	return 1;
 }
+
+
 void winner()
 {
 	cout << "You won!" << "\n";
 	afisareCastigator();
 	finalTime();
 	//clasament
-	string name;
-	cout << "Enter your name:" << "\n";
-	cin >> name;
-	char* file;
-	if (difficulty == 1)
+	if (difficulty != 4)
 	{
-		file = "Begginer.in";
-		actualizeazaClasament(name, duration, file);
+		string name;
+		cout << "Enter your name:" << "\n";
+		cin >> name;
+		char* file;
+		switch (difficulty)
+		{
+			case '1':
+				file = "Begginer.in";
+				actualizeazaClasament(name, duration, file);
+				break;
+			case '2':
+				file = "Medium.in";
+				actualizeazaClasament(name, duration, file);
+				break;
+			case '3':
+				file = "Expert.in";
+				actualizeazaClasament(name, duration, file);
+				break;
+		}
 	}
-	else if (difficulty == 2)
-	{
-		file = "Medium.in";
-		actualizeazaClasament(name, duration, file);
-	}
-	else if (difficulty == 3)
-	{
-		file = "Expert.in";
-		actualizeazaClasament(name, duration, file);
-	}
-	replay();
+	int unused=replay();
 }
 int identicMatrix()
 {
@@ -315,30 +325,62 @@ int possibilityOfFlag()
 		return 0;
 	return 1;
 }
+void putHint()
+{
+	int foundHint = 0;
+	srand(time(0));
+	while (foundHint == 0)
+	{
+		hintRow = rand() % nrOfRows;
+		hintColumn = rand() % nrOfColumns;
+		if (mask[hintRow][hintColumn] == '?'&&map.grid[hintRow][hintColumn] != 'B')
+		{
+			foundHint = 1;
+			nrOfLeftHints--;
+			mask[hintRow][hintColumn] = 'H';
+			afisareUtilizator();
+			cout << "You have " << nrOfLeftHints << " left hint(s)" << "\n";
+			resetHint = 1;
+		}
+	}
+}
 void nextMove()
 {
 	cout << "Choose your next move:(Number of left mines:" << minesLeft << ")";
-	cout << "\n" << "1.Flag" << "\n" << "2.Not a bomb" << "\n" << "3.Undo flag" << "\n"<<"4.New game"<<"\n";
+	cout << "\n" << "1.Flag" << "\n" << "2.Not a bomb" << "\n" << "3.Undo flag" << "\n"<<"4.New game"<<"\n"<<"5.Hint"<<"\n";
 	cout << "Your answer:"<<"\n";
-	char moveType[101];
-	cin >> moveType;
-	while (moveType[0] <= 48 || moveType[0] >= 53 || moveType[1] != NULL)
+	char moveType[100];
+	if (difficulty == 4&&nrOfMoves==0)
+	{
+		char c;
+		cin.get(c);
+	}
+	cin.getline(moveType, 101);
+	cout << "moveType " << moveType << "\n";
+	while (moveType[0] <= 48 || moveType[0] >= 54 || moveType[1] != NULL)
 	{
 		showInvalid();
 		cout << "Your answer:" << "\n";
-		cin >> moveType;
+		cin.getline(moveType, 101);
+	
 	}
+	nrOfMoves++;
 	if (moveType[0] == '4')
 		newGame();
 	else
 	{ 
+		if (resetHint == 1 && mask[hintRow][hintColumn] == 'H')
+		{
+			mask[hintRow][hintColumn] = '?';
+			resetHint = 0;
+		}
 		bool wrongFlag = 0;
 		if (moveType[0] == '1')
 		{
 			cinLineAndColumn(); 
 			while (possibilityOfFlag() == 0)
 			{
-				cout << "That space is uncovered or you have a flag there.Please give a valid one:";
+				cout << "That space is uncovered or you have a flag or a hint there.Please give a valid one:";
 				cinLineAndColumn();
 			}
 			mask[newRow][newColumn] = 'F';
@@ -359,7 +401,7 @@ void nextMove()
 		else if (moveType[0] == '2')
 		{
 			cinLineAndColumn();
-			while (mask[newRow][newColumn] != '?')
+			while (mask[newRow][newColumn] != '?'&&mask[newRow][newColumn] != 'H')
 			{
 				cout << "That is an uncoverded zone .Please give another one!";
 				cinLineAndColumn();
@@ -413,7 +455,7 @@ void nextMove()
 						}
 			}
 			//are 1-..8 bombe
-			else
+			else 
 			{
 				mask[newRow][newColumn] = map.grid[newRow][newColumn];
 				if (verificareFinal() == 1)
@@ -433,7 +475,7 @@ void nextMove()
 		{
 			if (checkAnyFlag() == 0)
 			{
-				cout << "It's your first move,you have no Flags there!";
+				cout << "You have no Flags as to undo them!"<<"\n";
 				nextMove();
 			}
 			else
@@ -452,6 +494,18 @@ void nextMove()
 				nextMove();
 			}
 		}
+		//////////////
+
+		else if (moveType[0] == '5')
+		{
+			if (nrOfLeftHints >= 1)
+			{
+				putHint();
+			}
+			else
+				cout << "You have no hints left!"<<"\n";
+			nextMove();
+		}
 	 }
 }
 void startTime()
@@ -465,29 +519,35 @@ void finalTime()
 }
 void newGame()
 {
+	nrOfPlayedGames++;
+	cout << nrOfPlayedGames << " ";
 	cout << "Choose the dificulty:";
 	cout << "\n";
 	cout <<"1. Beginner (height:9   width:9   mines:10)" << "\n" << "2. Intermediate (height:16   width:16   mines:40)" << "\n" << "3. Expert (height:16   width:30   mines:99)"<<"\n"<<"4. Custom"<<"\n";
 	cout << "Your answer:" << "\n";
 	char gameType[101];
-	cin >> gameType;
+	if (nrOfPlayedGames > 1)
+		cin.get();
+	cin.getline(gameType,102);
+	cout << "gameType" << gameType << "\n";
 	while (gameType[0] <= 48 || gameType[0] >= 53 || gameType[1] != NULL)
 	{
 		showInvalid();
 		cout << "Your answer:" << "\n";
-		cin >> gameType;
+		cin.getline(gameType, 102);
 	}
 	if (gameType[0] == '1')
-		{
+	{
 			startTime();
 			difficulty = 1;
 			nrOfMines = 10;
 			minesLeft = nrOfMines;
 			nrOfRows= nrOfColumns=9;
 			easy();
-		}
+	}
 	else if (gameType[0] == '2')
 		{
+			
 			startTime();
 			difficulty = 2;
 			nrOfMines = 40;
@@ -497,6 +557,7 @@ void newGame()
 		}
 	else if (gameType[0] == '3')
 	{
+	
 		startTime();
 		difficulty = 3;
 		nrOfRows = 16;
@@ -507,14 +568,15 @@ void newGame()
 	}
 	else
 	{
+		difficulty = 4;
 		cout << "Give the height:"; 
 		cin >> nrOfRows;
+		startTime();
 		while (valid(nrOfRows, 16) == 0)
 		{
 			cout << "Incorect dates"<<"\n"<<"Give a valid height:"<<"\n";
 			cin >> nrOfRows;
 		}
-		startTime();
 		cout << "Give the width:";
 		cin >> nrOfColumns;
 		while (valid(nrOfColumns, 30) == 0)
@@ -537,18 +599,21 @@ void newGame()
 	nextMove();
 }
 ////replay
-void replay()
+int replay()
 {
-	char a;
+	char option;
 	cout << "1) Replay 2) Quit" << endl;
-	cin >> a;
-	switch (a)
+	cin >> option;
+	switch (option)
 	{
 		case '1':
+			nrOfMoves = 0;
+			nrOfLeftHints = 3;
 			newGame();
+			return 1;
 			break;
 		case '2':
-			exit(0);
+			return 0;
 			break;
 		default:
 			showInvalid();
