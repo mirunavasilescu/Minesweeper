@@ -2,7 +2,7 @@
 #define DIMMAX 100
 #include <cstdio>
 #include <string>
-
+#include <stdlib.h>
 int nrOfMines, nrOfRows, nrOfColumns;
 
 struct joc
@@ -24,6 +24,10 @@ int newRow;
 char dim1[101];
 char dim2[101];
 
+//custom
+char customRow[101];
+char customColumn[101];
+
 //pt timp
 double duration;
 clock_t start;
@@ -36,8 +40,13 @@ int nrOfPlayedGames;
 int nrOfMoves;
 
 //PT HINT
-int nrOfLeftHints = 3;
+int nrOfLeftHints=3;
 int hintRow;
 int hintColumn;
 int resetHint = 0;
 
+bool wrongFlag;
+
+int finishedPrevGame = 0;
+
+char gameType[101];
