@@ -49,4 +49,6 @@ bool wrongFlag;
 
 int finishedPrevGame = 0;
 
-char gameType[101];
+char gameType[1001];
+char endGame[1001];
+int wonGame;

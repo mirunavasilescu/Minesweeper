@@ -74,9 +74,9 @@ void afisareCastigator()
 	cout << "    ";
 	for (i = 0; i < nrOfColumns; i++)
 		if (i <= 9)
-			cout << i << "    ";
+			cout << i << "     ";
 		else
-			cout << i << "   ";
+			cout << i << "    ";
 	cout << "\n";
 	for (i = 0; i < nrOfRows; i++)
 	{
@@ -90,7 +90,7 @@ void afisareCastigator()
 	}
 	cout << "\n";
 }
-//dupa fiecare pas
+
 void afisareUtilizator()
 {
 	int i, j;
@@ -130,7 +130,7 @@ void easy()
 	minesLeft = nrOfMines;
 	nrOfRows = nrOfColumns = 9;
 	reset(9, 9);
-	hiddenMatrix(9, 9, 10);
+	hiddenMatrix(9, 9, 3);
 }
 void medium()
 {
@@ -154,7 +154,7 @@ void hard()
 	hiddenMatrix(16, 30, 99);
 }
 
-int validForCustom(char coord[101], int dimMax)
+int validForCustom(char coord[1001], int dimMax)
 {
 	
 	int position;
@@ -353,15 +353,15 @@ void addToRanking()
 	char* file;
 	switch (difficulty)
 	{
-	case '1':
+	case 1:
 		file = "Begginer.in";
 		actualizeazaClasament(name, duration, file);
 		break;
-	case '2':
+	case 2:
 		file = "Medium.in";
 		actualizeazaClasament(name, duration, file);
 		break;
-	case '3':
+	case 3:
 		file = "Expert.in";
 		actualizeazaClasament(name, duration, file);
 		break;
@@ -370,6 +370,7 @@ void addToRanking()
 void winner()
 {
 	cout << "You won!" << "\n";
+	wonGame = 1;
 	finishedPrevGame++;
 	afisareCastigator();
 	finalTime();
@@ -447,6 +448,7 @@ void gameOver()
 {
 	cout << "Game Over!" << "\n";
 	finishedPrevGame++;
+	//doneGame = 1;
 	finalTime();
 	replay();
 }
@@ -546,12 +548,14 @@ void nextMove()
 	cout << "Choose your next move:(Number of left mines:" << minesLeft << ")";
 	cout << "\n" << "1.Flag" << "\n" << "2.Not a bomb" << "\n" << "3.Undo flag" << "\n"<<"4.New game"<<"\n"<<"5.Hint"<<"\n"<<"\n";
 	cout << "Your answer:"<<"\n";
-	char moveType[100];
-	if (difficulty == 4 && nrOfMoves==0)
+	///////////////////
+	char moveType[1000];
+	/*if (difficulty == 4 && nrOfMoves==0)
 	{
 		char c;
 		cin.get(c);
 	}
+	*/
 	cin.getline(moveType, 101);
 	cout << "moveType " << moveType << "\n";
 	while (moveType[0] <= 48 || moveType[0] >= 54 || moveType[1] != NULL)
@@ -626,6 +630,7 @@ void validGameType()
 		showInvalid();
 		cout << "Your answer:" << "\n";
 		cin.getline(gameType, 102);
+		cout << "gameType" << gameType << "\n";
 	}
 }
 void cinValidCustomRow()
@@ -647,7 +652,7 @@ void cinValidCustomColumn()
 void cinValidCustomMines()
 {
 	char customMines[101];
-	cout << "Give the number of mines(maximum number=rows*columns)/4:" << "\n";
+	cout << "Give the number of mines(maximum number=(rows*columns)/4):" << "\n";
 	cin.getline(customMines, 102);
 	cout << "nrofmines " << customMines << "\n";
 	nrOfMines = validForCustom(customMines, nrOfColumns*nrOfRows / 4);
@@ -670,6 +675,7 @@ void customGame()
 	minesLeft = nrOfMines;
 	reset(nrOfRows, nrOfColumns);
 	hiddenMatrix(nrOfRows, nrOfColumns, nrOfMines);
+	
 }
 void newGame()
 {
@@ -678,58 +684,80 @@ void newGame()
 	cout << "\n";
 	cout <<"1. Beginner (height:9   width:9   mines:10)" << "\n" << "2. Intermediate (height:16   width:16   mines:40)" << "\n" << "3. Expert (height:16   width:30   mines:99)"<<"\n"<<"4. Custom(max characteristics-expert)"<<"\n"<<"\n";
 	cout << "Your answer:" << "\n";
+	/*
 	if (finishedPrevGame > 0)
 	{
 		cin.get();
 		finishedPrevGame = 0;
-	}
+	}*/
 	cin.getline(gameType, 102);
 	validGameType();
-	if (gameType[0] == '1')
+	switch (gameType[0])
 	{
+		case '1':
 			startTime();
 			easy();
-	}
-	else if (gameType[0] == '2')
-		{
+			break;
+		case '2':
 			startTime();
 			medium();
-		}
-	else if (gameType[0] == '3')
-		{
+			break;
+		case '3':
 			startTime();
 			hard();
-		}
-	else
-	{
-		customGame();
+			break;
+		case '4':
+			customGame();
+			break;
 	}
 	//pt toate
 	initialMatrix();
 	nextMove();
 }
 
+void validForReply()
+{
+
+	cout << "endGame" << endGame<< "\n";
+	while (endGame[0] <= 48 || endGame[0] >= 51 || endGame[1] != NULL)
+	{
+		showInvalid();
+		cout << "Your answer:" << "\n";
+		cin.getline(endGame, 102);
+	}
+}
 int replay()
 {
 	char option;
-	cout << "1) Replay 2) Quit" << endl;
-	cin >> option;
-	switch (option)
+	///////////////
+	cout << "1) Replay 2) Quit" << "\n";
+	if (difficulty != 4 && wonGame == 1)
+	{
+		char c;
+		cin.get(c);
+		wonGame = 0;
+	}
+	cin.getline(endGame, 102);
+	validForReply();
+	switch (endGame[0])
 	{
 		case '1':
 			nrOfMoves = 0;
-			system("cls");
+			//system("cls");
 			newGame();
 			return 1;
 			//break;
 		case '2':
+			exit(0);
 			return 0;
 			//break;
+			/*
 		default:
 			showInvalid();
 			cout << "Your answer:" << "\n";
 			replay();
 			break;
+			*/
 	}
 }
 
