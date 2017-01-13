@@ -3,6 +3,12 @@
 #include <cstdio>
 #include <string>
 #include <stdlib.h>
+#include <queue>
+#include <vector>
+#include <utility>
+#include <random>
+#include <fstream>
+
 int nrOfMines, nrOfRows, nrOfColumns;
 
 struct joc
@@ -34,7 +40,6 @@ clock_t start;
 
 //pt clasament
 int difficulty;
-
 
 int nrOfPlayedGames;
 int nrOfMoves;

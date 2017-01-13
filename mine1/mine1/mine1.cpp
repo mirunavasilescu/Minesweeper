@@ -3,21 +3,70 @@
 #include"stdafx.h"
 #include "mine.h"
 #include <iostream>
-#include <queue>
-#include <vector>
-#include <utility>
-#include <random>
-
-#include <fstream>
 
 using namespace std;
 void newGame();
 void nextMove();
 int replay();
 void finalTime();
+
 string line;
-//clasament
-void actualizeazaClasament(string searchedName, double scorFinal, char* numeFisier)
+
+
+int checkFinal()
+{
+	for (int i = 0; i < nrOfRows; i++)
+		for (int j = 0; j < nrOfColumns; j++)
+			if (mask[i][j] == '?')
+				return 0;
+	return 1;
+}
+void afisareCastigator()
+{
+	int i, j;
+	cout << "    ";
+	for (i = 0; i < nrOfColumns; i++)
+		if (i <= 9)
+			cout << i << "    ";
+		else
+			cout << i << "   ";
+	cout << "\n";
+	for (i = 0; i < nrOfRows; i++)
+	{
+		if (i <= 9)
+			cout << i << "  ";
+		else
+			cout << i << " ";
+		for (j = 0; j < nrOfColumns; j++)
+			cout << "|" << map.grid[i][j] << "|  ";
+		cout << "\n";
+	}
+	cout << "\n";
+}
+
+void afisareUtilizator()
+{
+	int i, j;
+	cout << "    ";
+	for (i = 0; i < nrOfColumns; i++)
+		if(i<=9)
+			cout << i << "    ";
+		else
+			cout << i << "   ";
+	cout << "\n";
+	for (i = 0; i < nrOfRows; i++)
+	{
+		if (i<=9)
+			cout << i <<"  ";
+		else
+			cout << i << " ";
+		for (j = 0; j < nrOfColumns; j++)
+			cout <<"|"<< mask[i][j] << "|  ";
+		cout << "\n";
+	}
+	cout << "\n";
+}
+void updateRanking(string searchedName, double scorFinal, char* numeFisier)
 {
 	ifstream fin(numeFisier);
 	ofstream temp("temp.out");
@@ -32,6 +81,7 @@ void actualizeazaClasament(string searchedName, double scorFinal, char* numeFisi
 		if (name == searchedName && gasitOnce == 0)
 		{
 			gasitOnce = 1;
+			//better time
 			if (scoreInt > scorFinal)
 			{
 				temp << newLine << endl;
@@ -60,59 +110,6 @@ void actualizeazaClasament(string searchedName, double scorFinal, char* numeFisi
 	remove(numeFisier);
 	rename("temp.out", numeFisier);
 }
-int verificareFinal()
-{
-	for (int i = 0; i < nrOfRows; i++)
-		for (int j = 0; j < nrOfColumns; j++)
-			if (mask[i][j] == '?')
-				return 0;
-	return 1;
-}
-void afisareCastigator()
-{
-	int i, j;
-	cout << "    ";
-	for (i = 0; i < nrOfColumns; i++)
-		if (i <= 9)
-			cout << i << "     ";
-		else
-			cout << i << "    ";
-	cout << "\n";
-	for (i = 0; i < nrOfRows; i++)
-	{
-		if (i <= 9)
-			cout << i << "  ";
-		else
-			cout << i << " ";
-		for (j = 0; j < nrOfColumns; j++)
-			cout << "|" << map.grid[i][j] << "|   ";
-		cout << "\n";
-	}
-	cout << "\n";
-}
-
-void afisareUtilizator()
-{
-	int i, j;
-	cout << "    ";
-	for (i = 0; i < nrOfColumns; i++)
-		if(i<=9)
-			cout << i << "    ";
-		else
-			cout << i << "   ";
-	cout << "\n";
-	for (i = 0; i < nrOfRows; i++)
-	{
-		if (i<=9)
-			cout << i <<"  ";
-		else
-			cout << i << " ";
-		for (j = 0; j < nrOfColumns; j++)
-			cout <<"|"<< mask[i][j] << "|  ";
-		cout << "\n";
-	}
-	cout << "\n";
-}
 void reset(int nrOfLines, int nrOfColumns)
 {
 	int i, j;
@@ -121,20 +118,18 @@ void reset(int nrOfLines, int nrOfColumns)
 			map.grid[i][j] = '0';
 
 }
-//situatiile clasice
+
 void easy()
 {
-	//startTime();
 	difficulty = 1;
 	nrOfMines = 10;
 	minesLeft = nrOfMines;
 	nrOfRows = nrOfColumns = 9;
 	reset(9, 9);
-	hiddenMatrix(9, 9, 3);
+	hiddenMatrix(9, 9, 10);
 }
 void medium()
 {
-	//startTime();
 	difficulty = 2;
 	nrOfMines = 40;
 	minesLeft = nrOfMines;
@@ -144,7 +139,6 @@ void medium()
 }
 void hard()
 {
-	//startTime();
 	difficulty = 3;
 	nrOfRows = 16;
 	nrOfColumns = 30;
@@ -158,7 +152,7 @@ int validForCustom(char coord[1001], int dimMax)
 {
 	
 	int position;
-	if (coord[0] > '0'&&coord[0] <= '9')
+	if (coord[0] > '0' && coord[0] <= '9')
 	{
 		position = coord[0] - '0';
 		if (coord[1] == NULL)
@@ -174,10 +168,9 @@ int validForCustom(char coord[1001], int dimMax)
 		else if (coord[2] == NULL)
 		{
 
-			if ((coord[1] >= '0'&&coord[1] <= '9'))
+			if ((coord[1] >= '0' && coord[1] <= '9'))
 			{
 				position = (coord[0] - 48) * 10 + coord[1] - '0';
-				//////cond max
 				if ( position < dimMax) 
 				{
 					cout << "position=" << position << " " << dimMax << endl;
@@ -185,30 +178,30 @@ int validForCustom(char coord[1001], int dimMax)
 				}
 				else
 				{
-					cout << "1 Wrong input.Please give a valid one" << "\n";
+					cout << " Wrong input.Please give a valid one" << "\n";
 					return -1;
 				}
 			}
 			else
 			{
-				cout << "2 Wrong input.Please give a valid one" << "\n";
+				cout << " Wrong input.Please give a valid one" << "\n";
 				return -1;
 			}
 
 		}
 		else
 		{
-			cout << "3 Wrong input.Please give a valid one" << "\n";
+			cout << " Wrong input.Please give a valid one" << "\n";
 			return -1;
 		}
 	}
 	else
 	{
-		cout << "4 Wrong input.Please give a valid one" << "\n";
+		cout << " Wrong input.Please give a valid one" << "\n";
 		return -1;
 	}
 }
-//initializarea matricei utilizatorului
+
 void initialMatrix()
 {
 	int i, j;
@@ -228,7 +221,7 @@ void hiddenMatrix(int nrOfLines, int nrOfColumns, int nrOfMines)
 		map.mine_y = rand() % nrOfColumns;
 		if (map.grid[map.mine_x][map.mine_y] != 'B')
 		{
-			map.grid[map.mine_x][map.mine_y] = 'B';  //
+			map.grid[map.mine_x][map.mine_y] = 'B';  
 			map.nrBombs--;
 			for (linVecina = -1; linVecina <= 1; linVecina++)
 				for (colVecina = -1; colVecina <= 1; colVecina++)
@@ -243,7 +236,7 @@ void hiddenMatrix(int nrOfLines, int nrOfColumns, int nrOfMines)
 						}
 		}
 	}
-	afisareCastigator();
+	//afisareCastigator();
 }
 
 void showInvalid()
@@ -274,35 +267,34 @@ int validLineOrColumn(char dim[100],int type)
 			if ((dim[1] >= '0'&&dim[1] <= '9'))
 			{
 				position = (dim[0] - 48) * 10 + dim[1] - '0';
-				//////cond max
 				if ((type == 1 && position < nrOfRows) || (type == 2 && position < nrOfColumns))
 				{
-					cout << "position=" << position << " " << nrOfRows << endl;
+					//cout << "position=" << position << " " << nrOfRows << endl;
 					return position;
 					
 				}
 				else
 				{
-					cout << "1 Wrong input.Please give a valid one" << "\n";
+					cout << " Wrong input.Please give a valid one" << "\n";
 					return -1;
 				}
 			}
 			else
 			{
-				cout << "2 Wrong input.Please give a valid one" << "\n";
+				cout << " Wrong input.Please give a valid one" << "\n";
 				return -1;
 			}
 
 		}
 		else
 		{
-			cout << "3 Wrong input.Please give a valid one" << "\n";
+			cout << " Wrong input.Please give a valid one" << "\n";
 			return -1;
 		}
 	}
 	else
 	{
-		cout << "4 Wrong input.Please give a valid one" << "\n";
+		cout << " Wrong input.Please give a valid one" << "\n";
 		return -1;
 	}
 
@@ -311,14 +303,14 @@ void cinValidNewLine()
 {
 	cout << "\n" << "Give the row:" << "\n";
 	cin.getline(dim1, 101);
-	cout << "dim1 " << dim1 << "\n";
+	//cout << "dim1 " << dim1 << "\n";
 	newRow = validLineOrColumn(dim1, 1);
 }
 void cinValidNewColumn()
 {
 	cout << "\n" << "Give the column:" << "\n";
 	cin.getline(dim2, 101);
-	cout << "dim2 " << dim2 << "\n";
+	//cout << "dim2 " << dim2 << "\n";
 	newColumn = validLineOrColumn(dim2, 2);
 }
 void cinLineAndColumn()
@@ -355,15 +347,15 @@ void addToRanking()
 	{
 	case 1:
 		file = "Begginer.in";
-		actualizeazaClasament(name, duration, file);
+		updateRanking(name, duration, file);
 		break;
 	case 2:
 		file = "Medium.in";
-		actualizeazaClasament(name, duration, file);
+		updateRanking(name, duration, file);
 		break;
 	case 3:
 		file = "Expert.in";
-		actualizeazaClasament(name, duration, file);
+		updateRanking(name, duration, file);
 		break;
 	}
 }
@@ -436,7 +428,7 @@ void nextMoveIsFlag()
 	minesLeft--;
 	if (minesLeft == 0 && wrongFlag == 0)
 	{
-		if (verificareFinal() == 1)
+		if (checkFinal() == 1)
 			winner();
 		else
 			nextMove();
@@ -448,7 +440,6 @@ void gameOver()
 {
 	cout << "Game Over!" << "\n";
 	finishedPrevGame++;
-	//doneGame = 1;
 	finalTime();
 	replay();
 }
@@ -493,7 +484,7 @@ void nextMoveIsRevealMask()
 			//We're done with the current location in our queue, so we can remove it
 			openLocations.pop();
 		}
-		if (verificareFinal() == 1)
+		if (checkFinal() == 1)
 			winner();
 		else 
 			if (checkJustUncoveredMinesLeft() == 1)
@@ -504,11 +495,11 @@ void nextMoveIsRevealMask()
 				nextMove();
 			}
 	}
-	//are 1-..8 bombe
+	//1 to 8 bombs
 	else
 	{
 		mask[newRow][newColumn] = map.grid[newRow][newColumn];
-		if (verificareFinal() == 1)
+		if (checkFinal() == 1)
 			winner();
 		else
 			if (checkJustUncoveredMinesLeft() == 1) 
@@ -548,16 +539,9 @@ void nextMove()
 	cout << "Choose your next move:(Number of left mines:" << minesLeft << ")";
 	cout << "\n" << "1.Flag" << "\n" << "2.Not a bomb" << "\n" << "3.Undo flag" << "\n"<<"4.New game"<<"\n"<<"5.Hint"<<"\n"<<"\n";
 	cout << "Your answer:"<<"\n";
-	///////////////////
 	char moveType[1000];
-	/*if (difficulty == 4 && nrOfMoves==0)
-	{
-		char c;
-		cin.get(c);
-	}
-	*/
 	cin.getline(moveType, 101);
-	cout << "moveType " << moveType << "\n";
+	//cout << "moveType " << moveType << "\n";
 	while (moveType[0] <= 48 || moveType[0] >= 54 || moveType[1] != NULL)
 	{
 		showInvalid();
@@ -587,7 +571,6 @@ void nextMove()
 		{
 			nextMoveIsRevealMask();
 		}
-		//delete flag
 		else if (moveType[0] == '3')
 		{
 			nextMoveIsUndoFlag();
@@ -623,38 +606,37 @@ void setNrOfHints()
 }
 void validGameType()
 {
-	
-	cout << "gameType" << gameType << "\n";
+	//cout << "gameType" << gameType << "\n";
 	while (gameType[0] <= 48 || gameType[0] >= 53 || gameType[1] != NULL)
 	{
 		showInvalid();
 		cout << "Your answer:" << "\n";
 		cin.getline(gameType, 102);
-		cout << "gameType" << gameType << "\n";
+		//cout << "gameType" << gameType << "\n";
 	}
 }
 void cinValidCustomRow()
 {
-	char customRows[101];
+	char customRows[1001];
 	cout << "Give the height:";
-	cin.getline(customRows, 102);
-	cout << "nrofrows " << customRows << "\n";
+	cin.getline(customRows, 1002);
+	//cout << "nrofrows " << customRows << "\n";
 	nrOfRows = validForCustom(customRows, 16);
 }
 void cinValidCustomColumn()
 {
 	char customColumns[101];
 	cout << "Give the width:";
-	cin.getline(customColumns, 102);
-	cout << "nrocolumns " << customColumns << "\n";
+	cin.getline(customColumns, 1002);
+	//cout << "nrocolumns " << customColumns << "\n";
 	nrOfColumns = validForCustom(customColumns, 30);
 }
 void cinValidCustomMines()
 {
-	char customMines[101];
+	char customMines[1001];
 	cout << "Give the number of mines(maximum number=(rows*columns)/4):" << "\n";
-	cin.getline(customMines, 102);
-	cout << "nrofmines " << customMines << "\n";
+	cin.getline(customMines, 1002);
+	//cout << "nrofmines " << customMines << "\n";
 	nrOfMines = validForCustom(customMines, nrOfColumns*nrOfRows / 4);
 }
 void customGame()
@@ -668,7 +650,6 @@ void customGame()
 	while (nrOfColumns == -1)
 		cinValidCustomColumn();
 	setNrOfHints();
-	
 	nrOfMines = -1;
 	while (nrOfMines == -1)
 		cinValidCustomMines();
@@ -710,15 +691,13 @@ void newGame()
 			customGame();
 			break;
 	}
-	//pt toate
 	initialMatrix();
 	nextMove();
 }
 
 void validForReply()
 {
-
-	cout << "endGame" << endGame<< "\n";
+	//cout << "endGame" << endGame<< "\n";
 	while (endGame[0] <= 48 || endGame[0] >= 51 || endGame[1] != NULL)
 	{
 		showInvalid();
@@ -729,7 +708,6 @@ void validForReply()
 int replay()
 {
 	char option;
-	///////////////
 	cout << "1) Replay 2) Quit" << "\n";
 	if (difficulty != 4 && wonGame == 1)
 	{
@@ -743,21 +721,12 @@ int replay()
 	{
 		case '1':
 			nrOfMoves = 0;
-			//system("cls");
+			system("cls");
 			newGame();
 			return 1;
-			//break;
 		case '2':
 			exit(0);
 			return 0;
-			//break;
-			/*
-		default:
-			showInvalid();
-			cout << "Your answer:" << "\n";
-			replay();
-			break;
-			*/
 	}
 }
 
